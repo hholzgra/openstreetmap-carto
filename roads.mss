@@ -1860,6 +1860,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
+/* SIMPLIFY: no light rails
     [feature = 'railway_light_rail'],
     [feature = 'railway_funicular'],
     [feature = 'railway_narrow_gauge'] {
@@ -1874,7 +1875,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
     }
-
+*/
     [feature = 'railway_miniature'] {
       [zoom >= 15] {
         line/line-width: 1.2;
@@ -1924,6 +1925,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
+/* SIMPLIFY: don't show underground rails
     [feature = 'railway_subway'] {
       [zoom >= 12] {
         line-width: 2;
@@ -1939,6 +1941,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
     }
+*/
 
     [feature = 'railway_preserved'] {
       [zoom >= 12] {
@@ -2375,6 +2378,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 }
 
 #junctions {
+  /* SIMPLIFY: no motorway junction names
   [highway = 'motorway_junction'] {
     [zoom >= 11] {
       ref/text-name: "[ref]";
@@ -2401,6 +2405,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
   }
+  */
 
   [junction = 'yes'],
   [highway = 'traffic_signals'] {
@@ -2578,6 +2583,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
   }
 }
 
+/* SIMPLIFY: no road ref shields
 #roads-text-ref-low-zoom[zoom < 13] {
   [highway = 'motorway'][zoom >= 10],
   [highway = 'trunk'][zoom >= 11],
@@ -2733,6 +2739,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
   }
 }
+*/
 
 #roads-text-name {
   [highway = 'motorway'],
