@@ -6,6 +6,7 @@
   }
 }
 
+/* SIMPLIFY: hide housenumbers
 #housenumbers {
   [zoom >= 17] {
     text-name: "[addr:housenumber]";
@@ -17,6 +18,7 @@
     text-size: 9;
   }
 }
+*/
 
 #housenames {
   [zoom >= 17] {
