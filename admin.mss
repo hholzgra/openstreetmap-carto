@@ -100,6 +100,7 @@ overlapping borders correctly.
   comp-op: darken;
 }
 
+/* SIMPLIFY: no boundarys below city level
 #admin-high-zoom[zoom >= 13] {
   [admin_level = '9'],
   [admin_level = '10'] {
@@ -115,17 +116,20 @@ overlapping borders correctly.
   opacity: 0.5;
   comp-op: darken;
 }
+*/
 
 #admin-text[zoom >= 16] {
-  text-name: "[name]";
-  text-face-name: @book-fonts;
-  text-fill: @admin-boundaries;
-  text-halo-radius: 1.0;
-  text-halo-fill: rgba(255,255,255,0.6);
-  text-placement: line;
-  text-clip: true;
-  text-vertical-alignment: middle;
-  text-dy: -10;
+  [admin_level <= 8] {  /* SIMPLIFY: no boundarys below city level */
+    text-name: "[name]";
+    text-face-name: @book-fonts;
+    text-fill: @admin-boundaries;
+    text-halo-radius: 1.0;
+    text-halo-fill: rgba(255,255,255,0.6);
+    text-placement: line;
+    text-clip: true;
+    text-vertical-alignment: middle;
+    text-dy: -10;
+  }
 }
 
 #nature-reserve-text[zoom >= 13][way_pixels > 192000] {
