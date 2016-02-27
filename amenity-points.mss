@@ -503,12 +503,14 @@
     marker-clip: false;
   }
 
+/* SIMPLIFY: hide memorials like "Stolperstein"
   [feature = 'historic_memorial'][zoom >= 17] {
     marker-file: url('symbols/tourist_memorial.16.svg');
     marker-fill: @amenity-brown;
     marker-placement: interior;
     marker-clip: false;
   }
+*/
 
   [feature = 'historic_monument'][zoom >= 16] {
     marker-file: url('symbols/monument.16.svg');
