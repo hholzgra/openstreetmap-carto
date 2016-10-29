@@ -52,6 +52,8 @@ Stylesheet:
   - "aerialways.mss"
   - "admin.mss"
   - "addressing.mss"
+  - "sport.mss"
+  - "golf.mss"
 Layer:
   - id: "world"
     name: "world"
@@ -634,6 +636,68 @@ Layer:
       group-by: "layernotnull"
       minzoom: 9
     advanced: {}
+  - id: "sports-grounds"  
+    name: "sports-grounds"
+    class: ""
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,leisure,
+            case when leisure='pitch' then 2 when leisure='track' then 1 else 0 end as prio
+          FROM planet_osm_polygon
+          WHERE leisure in ('sports_centre','stadium','pitch','track')
+          ORDER BY z_order,prio,way_area desc)
+        AS sports_grounds
+    advanced: {}
+  - id: "sports"
+    name: "sports"
+    class: ""
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (select *, cast(abs(a12-a23) as integer)%180 as angle_diff, (a12+a23+90)/2 as angle, 1/coslat as labelsizefactor, d12*d23 as pitch_area from
+         (select *, st_npoints(way2) as nb, ST_Distance_sphere(st_transform(st_pointn(way2,1),4326),st_transform(st_pointn(way2,2),4326)) as d12,             
+         ST_Distance_sphere(st_transform(st_pointn(way2,3),4326),st_transform(st_pointn(way2,2),4326)) as d23,                                   
+         ST_Distance_sphere(st_transform(st_pointn(way2,1),4326),st_transform(st_pointn(way2,3),4326)) as d13,
+         cos(st_y(st_transform(st_pointn(way2,1),4326))/180*3.1415927) as coslat, degrees(st_azimuth(st_pointn(way2,1),st_pointn(way2,2))) as a12,
+         degrees(st_azimuth(st_pointn(way2,2),st_pointn(way2,3))) as a23 from                                                                     
+         (select *, st_area(way) as way_area, ST_ExteriorRing(ST_SimplifyPreserveTopology(way,100)) as way2 from (select (st_dump(way)).geom as way, sport, surface, access
+          from planet_osm_polygon
+          WHERE sport in ('tennis','soccer','basketball','rugby','rugby_union','rugby_league','american_football')
+            AND (building IS NULL OR building = 'no')
+            AND leisure = 'pitch'
+            AND way && !bbox!) as dump) as simplified) as simplified2)
+          as sports
+    advanced: {}
+  - id: "golf"
+    name: "golf"
+    class: ""
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (select way, geo, golf, ref, initcap(name) as name, case when golf='rough' then 5 when golf='fairway' then 10  when golf='green' then 20  when golf='bunker' then 30 when golf in ('water_hazard','lateral_water_hazard') then 35 else 40 end as prio from (select way,tags->'golf' as golf, name, ref, way_area, 'polygon' as geo from planet_osm_polygon where tags ? 'golf' AND way && !bbox! UNION select p.way,p.tags->'golf' as golf, p.name, coalesce(p.ref,l.ref) as ref, 0 as way_area, 'point' as geo from planet_osm_point p LEFT JOIN planet_osm_line l ON (ST_Intersects(p.way, l.way) AND l.tags ? 'golf') where p.tags ? 'golf' AND p.way && !bbox! UNION select way,tags->'golf' as golf, name, ref, 0 as way_area, 'line' as geo from planet_osm_line where tags ? 'golf' AND way && !bbox!) as golf order by prio) as golf
+    advanced: {}
+  - id: "citywalls"
+    name: "citywalls"
+    class: ""
+    geometry: "linestring"
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM planet_osm_line
+          WHERE historic = 'citywalls')
+        AS citywalls
+    advanced: {}
+    properties:
+      minzoom: 14
   - id: "landuse-overlay"
     name: "landuse-overlay"
     class: ""
